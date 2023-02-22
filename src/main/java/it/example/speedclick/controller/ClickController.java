@@ -3,7 +3,6 @@ package it.example.speedclick.controller;
 import it.example.speedclick.configuration.MyWebSocketHandler;
 import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
-import it.example.speedclick.repository.ClickRepository;
 import it.example.speedclick.service.ClickService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -56,15 +56,11 @@ public class ClickRepository {
                 .filter(item -> item.getName().equals(user.getName()) && item.getSurname().equals(user.getSurname()))
                 .findFirst()
                 .orElseGet(() -> {
-                    user.setId(computeUserId());
+                    user.setId(user.getName() + "." + user.getSurname());
                     users.add(user);
                     System.out.println("Inserting new user: " + user);
                     return user;
                 });
-    }
-
-    private static String computeUserId() {
-        return UUID.randomUUID().toString();
     }
 
     public Map<String, BigDecimal> getMinMap() {
