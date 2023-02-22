@@ -3,6 +3,7 @@ package it.example.speedclick.utility;
 import it.example.speedclick.dto.Point;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class MathUtils {
     public static List<BigDecimal> linspace(BigDecimal min,
                                             BigDecimal max,
                                             int n) {
-        BigDecimal dt = (max.subtract(min)).divide(new BigDecimal(n));
+        BigDecimal dt = (max.subtract(min)).divide(new BigDecimal(n), MathContext.DECIMAL64);
         return IntStream.rangeClosed(0, n)
                 .mapToObj(i -> min.add(dt.multiply(new BigDecimal(
                         i))))
