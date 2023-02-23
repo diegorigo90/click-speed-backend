@@ -102,7 +102,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     private String getTopUserInfo() {
-        return repository.getMaxMap()
+        return repository.getMinMap()
                          .entrySet()
                          .stream()
                          .sorted(Map.Entry.comparingByValue())
@@ -115,7 +115,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private String toString(String userId,
                             BigDecimal time) {
         User user = repository.getUserById(userId);
-        return MessageFormat.format("{0} - {1} seconds",
+        return MessageFormat.format("{0} - {1} ms",
                                     user.toString(),
                                     time);
     }
