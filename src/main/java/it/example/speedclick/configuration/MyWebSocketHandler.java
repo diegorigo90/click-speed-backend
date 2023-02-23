@@ -8,25 +8,30 @@ import it.example.speedclick.dto.User;
 import it.example.speedclick.repository.ClickRepository;
 import it.example.speedclick.utility.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
-    List<WebSocketSession> sessions = new ArrayList<>();
+    private final Map<String, ConcurrentWebSocketSessionDecorator> sessions = new ConcurrentHashMap<>();
 
     @Autowired
+//    @Qualifier("InMemoryRepository")
+    @Qualifier("DatabaseRepository")
     ClickRepository repository;
 
     @Override
@@ -40,13 +45,18 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                                       CloseStatus status) throws Exception {
         System.out.println(String.format("Session %s closed",
                                          session.getId()));
-        sessions.remove(session);
+        try(ConcurrentWebSocketSessionDecorator decorator = sessions.remove(session.getId())) {
+            System.out.println("Rimossa sessione");
+        }
+
+
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println("Connected ... " + session.getId());
-        sessions.add(session);
+        sessions.put(session.getId(), new ConcurrentWebSocketSessionDecorator (session, 2000, 4096));
+        sendBroadcast();
     }
 
     @Override
@@ -57,18 +67,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     public void sendBroadcast() {
-        for (WebSocketSession session : sessions) {
-            try {
-                if (session.isOpen()) {
+
+        sessions.forEach((key, value) -> {
+            if (value.isOpen()) {
+                try {
                     ObjectMapper mapper = new ObjectMapper();
                     TextMessage message = new TextMessage(mapper.writeValueAsString(
                             toMessage()));
-                    session.sendMessage(message);
+
+                    value.sendMessage(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+        });
     }
 
 
@@ -90,8 +102,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 "Broadcast message: {0} values registered",
                 values.size()));
         return MathUtils.computeHistogram(values,
-                                          BigDecimal.ZERO,
-                                          new BigDecimal(500),
+                                          new BigDecimal(30),
+                                          new BigDecimal(300),
                                           20);
     }
 

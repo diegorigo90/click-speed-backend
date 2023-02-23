@@ -22,6 +22,7 @@ public class ClickController {
     MyWebSocketHandler webSocketHandler;
 
     @PostMapping()
+    @CrossOrigin(origins = "*")
     public void addTimes(@RequestBody TimesInputDto dto) {
         service.registerTimes(dto);
         webSocketHandler.sendBroadcast();
@@ -29,6 +30,7 @@ public class ClickController {
 
     @PostMapping("/user")
     @ResponseBody
+    @CrossOrigin(origins = "*")
     public User checkOrInsertUser(@RequestBody User user) {
         return service.checkOrInsertUser(user);
     }

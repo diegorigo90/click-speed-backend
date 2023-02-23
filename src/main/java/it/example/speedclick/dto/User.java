@@ -1,6 +1,14 @@
 package it.example.speedclick.dto;
 
+
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+
+@Entity(name = "User")
 public class User {
+    @Id
     private String id;
     private String name;
     private String surname;

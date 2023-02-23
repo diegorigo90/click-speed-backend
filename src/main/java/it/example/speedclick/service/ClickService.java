@@ -4,11 +4,15 @@ import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
 import it.example.speedclick.repository.ClickRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClickService {
+
     @Autowired
+//    @Qualifier("InMemoryRepository")
+    @Qualifier("DatabaseRepository")
     ClickRepository repository;
 
     public void registerTimes(TimesInputDto dto) {
