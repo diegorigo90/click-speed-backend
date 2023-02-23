@@ -3,26 +3,17 @@
 <head>
     <title>Hello WebSocket</title>
     <link href="/bootstrap.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
-    <script src="/webjars/jquery/jquery.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/jquery.js"></script>
     <script src="/app.js"></script>
 </head>
 <body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
 <div id="main-content" class="container p-5">
-    <h2 style="text-align:center">WebSocket</h2>
+    <h2>WebSocket</h2>
     <div class="row">
-        <div class="col-12 col-lg-6 pt-2 d-grid">
+        <div class="col-12 pt-2 d-grid">
             <button  id="connect" class="btn btn-success btn-block btn-lg" type="submit">Connect</button>
             <button style="display: none" id="disconnect" class="btn btn-danger btn-block btn-lg" type="submit">Disconnect
             </button>
-        </div>
-        <div class="col-12 col-lg-6 pt-2 d-grid">
-            <button id="start" class="btn btn-secondary btn-block btn-lg" type="submit" disabled="true">Start automatic backend messages</button>
         </div>
     </div>
     <div class="row pt-2 pb-3">
@@ -40,7 +31,7 @@
                     <th>Messages</th>
                 </tr>
                 </thead>
-                <tbody id="greetings">
+                <tbody id="responses">
                 </tbody>
             </table>
         </div>

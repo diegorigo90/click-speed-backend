@@ -1,12 +1,12 @@
 package it.example.speedclick.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.example.speedclick.dto.Data;
 import it.example.speedclick.dto.MyMessage;
 import it.example.speedclick.dto.Point;
+import it.example.speedclick.dto.User;
 import it.example.speedclick.repository.ClickRepository;
 import it.example.speedclick.utility.MathUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -16,7 +16,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
@@ -27,13 +30,16 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     ClickRepository repository;
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable throwable) throws Exception {
+    public void handleTransportError(WebSocketSession session,
+                                     Throwable throwable) throws Exception {
         System.out.println("error occured at sender " + session);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println(String.format("Session %s closed because of %s", session.getId(), status.getReason()));
+    public void afterConnectionClosed(WebSocketSession session,
+                                      CloseStatus status) throws Exception {
+        System.out.println(String.format("Session %s closed",
+                                         session.getId()));
         sessions.remove(session);
     }
 
@@ -44,8 +50,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage jsonTextMessage) throws Exception {
+    protected void handleTextMessage(WebSocketSession session,
+                                     TextMessage jsonTextMessage) throws Exception {
         System.out.println("message received: " + jsonTextMessage.getPayload());
+        sendBroadcast();
     }
 
     public void sendBroadcast() {
@@ -53,7 +61,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             try {
                 if (session.isOpen()) {
                     ObjectMapper mapper = new ObjectMapper();
-                    TextMessage message = new TextMessage(mapper.writeValueAsString(toMessage()));
+                    TextMessage message = new TextMessage(mapper.writeValueAsString(
+                            toMessage()));
                     session.sendMessage(message);
                 }
             } catch (Exception e) {
@@ -61,7 +70,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
-
 
 
     private MyMessage toMessage() {
@@ -78,23 +86,37 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     private List<Point> generateHistogramPoints() {
         List<BigDecimal> values = repository.getAllTimes();
-        System.out.println(MessageFormat.format("Broadcast message: {0} values registered", values.size()));
-        List<Point> points = MathUtils.computeHistogram(values, BigDecimal.ZERO, new BigDecimal(500), 20);
-        return points;
+        System.out.println(MessageFormat.format(
+                "Broadcast message: {0} values registered",
+                values.size()));
+        return MathUtils.computeHistogram(values,
+                                          BigDecimal.ZERO,
+                                          new BigDecimal(500),
+                                          20);
     }
 
     private Map<String, String> generateInfoMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("Top User",getTopUserInfo());
+        map.put("Top User", getTopUserInfo());
         return map;
     }
 
     private String getTopUserInfo() {
         return repository.getMaxMap()
-                .entrySet()
-                .stream()
-                .sorted(Comparator.comparing(item -> item.getValue()))
-                .findFirst()
-                .map(item -> item.getKey() + " - " + item.getValue()).orElse("...");
+                         .entrySet()
+                         .stream()
+                         .sorted(Map.Entry.comparingByValue())
+                         .findFirst()
+                         .map(item -> toString(item.getKey(),
+                                               item.getValue()))
+                         .orElse("...");
+    }
+
+    private String toString(String userId,
+                            BigDecimal time) {
+        User user = repository.getUserById(userId);
+        return MessageFormat.format("{0} - {1} seconds",
+                                    user.toString(),
+                                    time);
     }
 }

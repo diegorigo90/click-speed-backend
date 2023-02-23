@@ -13,8 +13,6 @@ public class ClickRepository {
 
     private final List<BigDecimal> allTimes = new ArrayList<>();
 
-    private final Map<String, BigDecimal> minMap = new HashMap<>();
-
     private final Map<String, BigDecimal> maxMap = new HashMap<>();
 
     public List<User> getUsers() {
@@ -30,44 +28,44 @@ public class ClickRepository {
         String userId = dto.getUserId();
 
         handleMaximum(times, userId);
-        handleMinimum(times, userId);
 
         allTimes.addAll(times);
     }
 
-    private void handleMaximum(List<BigDecimal> times, String userId) {
-        BigDecimal max = times.stream().max(Comparator.naturalOrder()).orElseThrow();
+    private void handleMaximum(List<BigDecimal> times,
+                               String userId) {
+        BigDecimal max = times.stream()
+                              .max(Comparator.naturalOrder())
+                              .orElseThrow();
         BigDecimal lastMax = maxMap.get(userId);
         if (Objects.isNull(lastMax) || max.compareTo(lastMax) < 0) {
             maxMap.put(userId, max);
         }
     }
 
-    private void handleMinimum(List<BigDecimal> times, String userId) {
-        BigDecimal min = times.stream().min(Comparator.naturalOrder()).orElseThrow();
-        BigDecimal lastMin = minMap.get(userId);
-        if (Objects.isNull(lastMin) || min.compareTo(lastMin) < 0) {
-            minMap.put(userId, min);
-        }
-    }
-
     public User checkOrInsertUser(User user) {
         return users.stream()
-                .filter(item -> item.getName().equals(user.getName()) && item.getSurname().equals(user.getSurname()))
-                .findFirst()
-                .orElseGet(() -> {
-                    user.setId(user.getName() + "." + user.getSurname());
-                    users.add(user);
-                    System.out.println("Inserting new user: " + user);
-                    return user;
-                });
-    }
-
-    public Map<String, BigDecimal> getMinMap() {
-        return minMap;
+                    .filter(item -> item.getName()
+                                        .equals(user.getName()) && item.getSurname()
+                                                                       .equals(user.getSurname()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        user.setId(UUID.randomUUID().toString());
+                        users.add(user);
+                        System.out.println("Inserting new user: " + user);
+                        return user;
+                    });
     }
 
     public Map<String, BigDecimal> getMaxMap() {
         return maxMap;
+    }
+
+    public User getUserById(String userId) {
+        return users.stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No user with id: " + userId));
     }
 }
