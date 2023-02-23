@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Repository()
-@Profile("inMemory")
+@Profile("!database")
 public class InMemoryRepository implements ClickRepository{
     private final List<User> users = new ArrayList<>();
 
