@@ -27,9 +27,9 @@ public class ClickRepository {
         List<BigDecimal> times = dto.getTimes();
         String userId = dto.getUserId();
 
-        handleMaximum(userId);
-
         allTimes.addAll(times);
+
+        handleMaximum(userId);
     }
 
     private void handleMaximum(String userId) {
