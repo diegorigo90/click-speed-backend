@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 public class ClickService {
 
     @Autowired
-//    @Qualifier("InMemoryRepository")
-    @Qualifier("DatabaseRepository")
     ClickRepository repository;
 
     public void registerTimes(TimesInputDto dto) {

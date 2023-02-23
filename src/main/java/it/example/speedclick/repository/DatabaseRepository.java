@@ -4,6 +4,7 @@ import it.example.speedclick.dto.Times;
 import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -13,7 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 
 
-@Repository("DatabaseRepository")
+@Repository()
+@Profile("database")
 public class DatabaseRepository implements ClickRepository {
     @Autowired
     TimesRepository timesRepository;

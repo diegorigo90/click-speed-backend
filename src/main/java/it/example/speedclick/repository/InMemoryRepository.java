@@ -2,12 +2,14 @@ package it.example.speedclick.repository;
 
 import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-@Repository("InMemoryRepository")
+@Repository()
+@Profile("inMemory")
 public class InMemoryRepository implements ClickRepository{
     private final List<User> users = new ArrayList<>();
 

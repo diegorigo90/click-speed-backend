@@ -8,7 +8,6 @@ import it.example.speedclick.dto.User;
 import it.example.speedclick.repository.ClickRepository;
 import it.example.speedclick.utility.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -30,8 +29,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private final Map<String, ConcurrentWebSocketSessionDecorator> sessions = new ConcurrentHashMap<>();
 
     @Autowired
-//    @Qualifier("InMemoryRepository")
-    @Qualifier("DatabaseRepository")
     ClickRepository repository;
 
     @Override
