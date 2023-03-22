@@ -1,7 +1,9 @@
 package it.example.speedclick.repository;
 
+import it.example.speedclick.dto.Time;
 import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
+import it.example.speedclick.dto.UserBestTime;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,4 +19,5 @@ public interface ClickRepository {
 
     User getUserById(String userId);
 
+    List<UserBestTime> getClassification();
 }

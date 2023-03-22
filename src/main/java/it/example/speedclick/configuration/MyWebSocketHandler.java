@@ -5,6 +5,7 @@ import it.example.speedclick.dto.Data;
 import it.example.speedclick.dto.MyMessage;
 import it.example.speedclick.dto.Point;
 import it.example.speedclick.dto.User;
+import it.example.speedclick.dto.UserBestTime;
 import it.example.speedclick.repository.ClickRepository;
 import it.example.speedclick.utility.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session,
-                                     Throwable throwable) throws Exception {
+                                     Throwable throwable) {
         System.out.println("error occured at sender " + session);
     }
 
@@ -41,24 +42,22 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status) throws Exception {
         System.out.println(String.format("Session %s closed",
-                                         session.getId()));
-        try(ConcurrentWebSocketSessionDecorator decorator = sessions.remove(session.getId())) {
+                session.getId()));
+        try (ConcurrentWebSocketSessionDecorator decorator = sessions.remove(session.getId())) {
             System.out.println("Rimossa sessione");
         }
-
-
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         System.out.println("Connected ... " + session.getId());
-        sessions.put(session.getId(), new ConcurrentWebSocketSessionDecorator (session, 2000, 4096));
+        sessions.put(session.getId(), new ConcurrentWebSocketSessionDecorator(session, 2000, 4096));
         sendBroadcast();
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session,
-                                     TextMessage jsonTextMessage) throws Exception {
+                                     TextMessage jsonTextMessage) {
         System.out.println("message received: " + jsonTextMessage.getPayload());
         sendBroadcast();
     }
@@ -89,6 +88,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         data.setX(points.stream().map(Point::getX).toList());
         data.setY(points.stream().map(Point::getY).toList());
         data.setInfo(generateInfoMap());
+        data.setClassification(repository.getClassification());
 
         return new MyMessage(data);
     }
@@ -99,9 +99,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 "Broadcast message: {0} values registered",
                 values.size()));
         return MathUtils.computeHistogram(values,
-                                          new BigDecimal(30),
-                                          new BigDecimal(300),
-                                          20);
+                new BigDecimal(30),
+                new BigDecimal(300),
+                20);
     }
 
     private Map<String, String> generateInfoMap() {
@@ -112,20 +112,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     private String getTopUserInfo() {
         return repository.getMinMap()
-                         .entrySet()
-                         .stream()
-                         .sorted(Map.Entry.comparingByValue())
-                         .findFirst()
-                         .map(item -> toString(item.getKey(),
-                                               item.getValue()))
-                         .orElse("...");
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .findFirst()
+                .map(item -> toString(item.getKey(),
+                        item.getValue()))
+                .orElse("...");
     }
 
     private String toString(String userId,
                             BigDecimal time) {
         User user = repository.getUserById(userId);
         return MessageFormat.format("{0} - {1} ms",
-                                    user.toString(),
-                                    time);
+                user.toString(),
+                time);
     }
 }

@@ -6,8 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-@Entity(name = "Times")
-public class Times {
+@Entity(name = "TIMES")
+public class Time {
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE
@@ -16,10 +16,10 @@ public class Times {
     private Long time;
     private String userId;
 
-    public Times() {
+    public Time() {
     }
 
-    public Times(Long time, String userId) {
+    public Time(Long time, String userId) {
         this.time = time;
         this.userId = userId;
     }

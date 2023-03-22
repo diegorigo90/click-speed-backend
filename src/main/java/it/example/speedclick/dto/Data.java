@@ -10,6 +10,8 @@ public class Data {
 
     Map<String, String> info;
 
+    List<UserBestTime> classification;
+
     public List<BigDecimal> getX() {
         return x;
     }
@@ -32,5 +34,13 @@ public class Data {
 
     public void setInfo(Map<String, String> info) {
         this.info = info;
+    }
+
+    public List<UserBestTime> getClassification() {
+        return classification;
+    }
+
+    public void setClassification(List<UserBestTime> classification) {
+        this.classification = classification;
     }
 }

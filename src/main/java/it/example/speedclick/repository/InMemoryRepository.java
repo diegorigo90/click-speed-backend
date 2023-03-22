@@ -1,7 +1,12 @@
 package it.example.speedclick.repository;
 
+import it.example.speedclick.dto.Time;
 import it.example.speedclick.dto.TimesInputDto;
 import it.example.speedclick.dto.User;
+import it.example.speedclick.dto.UserBestTime;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -11,14 +16,17 @@ import java.util.*;
 @Repository()
 @Profile("!database")
 public class InMemoryRepository implements ClickRepository{
+
+    Logger LOGGER = LoggerFactory.getLogger(InMemoryRepository.class);
     private final List<User> users = new ArrayList<>();
 
     private final List<BigDecimal> allTimes = new ArrayList<>();
 
     private final Map<String, BigDecimal> minMap = new HashMap<>();
 
-    public List<User> getUsers() {
-        return users;
+    @PostConstruct
+    public void initialize(){
+        LOGGER.info("Initialized InMemory Repository");
     }
 
     public List<BigDecimal> getAllTimes() {
@@ -68,5 +76,10 @@ public class InMemoryRepository implements ClickRepository{
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(
                         "No user with id: " + userId));
+    }
+
+    @Override
+    public List<UserBestTime> getClassification() {
+        return null; //TODO
     }
 }
