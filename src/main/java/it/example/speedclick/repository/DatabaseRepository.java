@@ -30,7 +30,7 @@ public class DatabaseRepository implements ClickRepository {
     UserRepository userRepository;
 
     @PostConstruct
-    public void initialize(){
+    public void initialize() {
         LOGGER.info("Initialized DatabaseRepository");
     }
 
@@ -58,7 +58,7 @@ public class DatabaseRepository implements ClickRepository {
         Map<String, BigDecimal> minMap = new HashMap<>();
 
         Time times = timesRepository.findFirstByOrderByTime();
-        if(times != null) {
+        if (times != null) {
             minMap.put(times.getUserId(), new BigDecimal(times.getTime()));
         }
 
@@ -72,12 +72,12 @@ public class DatabaseRepository implements ClickRepository {
     }
 
     @Override
-    public List<UserBestTime> getClassification(){
-        List<Object[]> classification = timesRepository.getClassification();
-        return classification.stream().map(item -> {
+    public List<UserBestTime> getClassification() {
+        return timesRepository.getClassification().stream().map(item -> {
             UserBestTime dto = new UserBestTime();
-            dto.setUser(item[0].toString());
-            dto.setTime(Integer.valueOf(item[1].toString()));
+            dto.setUser(item[0].toString() + " " + item[1].toString());
+            dto.setUserId(item[2].toString());
+            dto.setTime(Integer.valueOf(item[3].toString()));
             return dto;
         }).collect(Collectors.toList());
     }

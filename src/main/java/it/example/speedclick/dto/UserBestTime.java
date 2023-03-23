@@ -9,6 +9,8 @@ public class UserBestTime {
 
     private String user;
 
+    private String userId;
+
     public int getTime() {
         return time;
     }
@@ -23,5 +25,13 @@ public class UserBestTime {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -15,9 +15,9 @@ public interface TimesRepository extends JpaRepository<Time, String> {
     Time findFirstByOrderByTime();
 
     @Query(
-            value = "SELECT concat(name,' ',surname) as username, min(time) as time " +
+            value = "SELECT name, surname, user_id, min(time) as time " +
                     "FROM public.times t " +
-                    "JOIN public.user u on u.id = t.user_id group by name, surname, username order by time asc",
+                    "JOIN public.user u on u.id = t.user_id group by name, surname, user_id order by time asc",
             nativeQuery = true)
     List<Object[]> getClassification();
 }
