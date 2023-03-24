@@ -16,8 +16,8 @@ public interface TimesRepository extends JpaRepository<Time, String> {
 
     @Query(
             value = "SELECT name, surname, user_id, min(time) as time " +
-                    "FROM public.times t " +
-                    "JOIN public.user u on u.id = t.user_id group by name, surname, user_id order by time asc",
+                    "FROM times t " +
+                    "JOIN users u on u.id = t.user_id group by name, surname, user_id order by time asc",
             nativeQuery = true)
     List<Object[]> getClassification();
 }
