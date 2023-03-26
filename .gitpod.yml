@@ -12,3 +12,4 @@ vscode:
     - cweijan.vscode-mysql-client2
     - vscjava.vscode-java-pack
     - ms-azuretools.vscode-docker
+    - pivotal.vscode-boot-dev-pack
