@@ -42,7 +42,7 @@ public class DatabaseRepository implements ClickRepository {
     @Override
     public void registerTimes(TimesInputDto dto) {
         String userId = dto.getUserId();
-        timesRepository.saveAll(dto.getTimes().stream().map(time -> new Time(time.longValue(), userId)).toList());
+        timesRepository.saveAll(dto.getTimes().stream().filter(time -> time.compareTo(new BigDecimal(30)) > 0 ).map(time -> new Time(time.longValue(), userId)).toList());
     }
 
     @Override
