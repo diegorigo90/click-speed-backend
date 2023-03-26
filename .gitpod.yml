@@ -11,3 +11,4 @@ vscode:
   extensions:
     - cweijan.vscode-mysql-client2
     - vscjava.vscode-java-pack
+    - ms-azuretools.vscode-docker
