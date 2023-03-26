@@ -11,9 +11,14 @@ services:
        - '5438:5432'
       volumes:
         - ./postgres-data:/var/lib/postgresql/data
+      healthcheck:
+        test: [ "CMD-SHELL", "pg_isready" ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
     speed-click-app:
-      image: speed-click:latest
+      image: nicholasmantovani23/speed-click:latest
       ports:
         - '8085:8080'
       environment:
@@ -21,4 +26,5 @@ services:
         DATABASE_USERNAME: postgres
         DATABASE_PASSWORD: postgres
       depends_on:
-        - postgres
+        postgres:
+          condition: service_healthy
